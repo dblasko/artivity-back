@@ -8,3 +8,6 @@ class User(db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
 
     bio = db.Column(db.String(250))
+
+    challenges_answers = db.relationship("User", backref=db.backref("user_id"), lazy=True)
+    challenges_created = db.relationship("Challenge", backref=db.backref("user_created_id"), lazy=True)
