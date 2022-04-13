@@ -9,5 +9,5 @@ class User(db.Model):
 
     bio = db.Column(db.String(250))
 
-    challenges_answers = db.relationship("User", backref=db.backref("user_id"), lazy=True)
-    challenges_created = db.relationship("Challenge", backref=db.backref("user_created_id"), lazy=True)
+    challenges_answers = db.relationship("ChallengeAnswer", back_populates="user", lazy=True)
+    challenges_created = db.relationship("Challenge", back_populates="user_created", lazy=True)

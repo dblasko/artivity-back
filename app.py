@@ -4,15 +4,20 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
 from config import configure
-from routes import user_blueprint
 
 load_dotenv()
 
 app = Flask(__name__)
 configure(app)
-app.register_blueprint(user_blueprint)
 
 db = SQLAlchemy(app)
+
+from routes import user_blueprint
+from routes import challenge_blueprint
+
+app.register_blueprint(user_blueprint, url_prefix="/user")
+app.register_blueprint(challenge_blueprint, url_prefix="/challenge")
+
 
 @app.route('/')
 def hello_world():
@@ -20,7 +25,7 @@ def hello_world():
 
 
 from commands import *
-import models
+from models import *
 
 
 if __name__ == '__main__':

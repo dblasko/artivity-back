@@ -5,7 +5,7 @@ auth = HTTPBasicAuth()
 user_blueprint = Blueprint("user", __name__)
 
 
-@user_blueprint.route('/user')
+@user_blueprint.route('/hello')
 @auth.login_required()
 def hello_user():
     return 'Hello User!'

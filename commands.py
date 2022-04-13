@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from app import app, db
-from repositories import UserRepository
+from models import ChallengeType
+from repositories import UserRepository, ChallengeRepository
 
 
 @app.cli.command("create_db")
@@ -18,6 +21,22 @@ def populate_dummy_db():
     db.create_all()
 
     user_repo = UserRepository()
-    user_repo.create(pseudo="danny", email="daniel.blasko.dev@gmail.com", password="toto")
-    user_repo.create(pseudo="tuthur", email="arthur.gardon@gmail.com", password="tata")
+    danny = user_repo.create(pseudo="danny", email="daniel.blasko.dev@gmail.com", password="toto")
+    tuthur = user_repo.create(pseudo="tuthur", email="arthur.gardon@gmail.com", password="tata")
 
+    challenge_repo = ChallengeRepository()
+    challenge_1 = challenge_repo.create(subject="Dessine-moi un mouton",
+                                        title="Balade champêtre",
+                                        type=ChallengeType.drawing,
+                                        start_datetime=datetime.now(),
+                                        end_datetime=None,
+                                        timelimit_seconds=None,
+                                        user_created=danny)
+
+    challenge_2 = challenge_repo.create(subject="Chofite",
+                                        title="Bolopop",
+                                        type=ChallengeType.text,
+                                        start_datetime=datetime.now(),
+                                        end_datetime=None,
+                                        timelimit_seconds=None,
+                                        user_created=tuthur)
