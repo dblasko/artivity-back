@@ -11,12 +11,12 @@ class ChallengeType(enum.Enum):
 
 class Challenge(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
-    subject = db.Column(db.String(50))
-    title = db.Column(db.String(320))
-    type = db.Column(enum.Enum(ChallengeType))
-    start_datetime = db.Column(db.Time)    
-    end_datetime = db.Column(db.Time)
-    timelimit_seconds = db.Column(db.Integer)
+    subject = db.Column(db.String(50), nullable=False)
+    title = db.Column(db.String(320), nullable=False)
+    type = db.Column(enum.Enum(ChallengeType), nullable=False)
+    start_datetime = db.Column(db.Time, nullable=False)
+    end_datetime = db.Column(db.Time, nullable=True)
+    timelimit_seconds = db.Column(db.Integer, nullable=True)
 
     user_created_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
@@ -29,5 +29,4 @@ class ChallengeAnswer(db.Model):
     end_time = db.Column(db.DateTime, nullable=False)
 
     answer = db.Column(db.LargeBinary, nullable=True)
-
 
