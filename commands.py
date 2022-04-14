@@ -44,7 +44,8 @@ def populate_dummy_db():
     dummy_answer_1 = ChallengeAnswer(
         user=danny,
         challenge=challenge_1,
-        start_time=datetime.now()
+        start_time=datetime.now(),
+        is_public=True
     )
     db.session.add(dummy_answer_1)
     db.session.commit()
@@ -52,7 +53,8 @@ def populate_dummy_db():
     dummy_answer_2 = ChallengeAnswer(
         user=danny,
         challenge=challenge_2,
-        start_time=datetime.now()
+        start_time=datetime.now(),
+        is_public=True
     )
     db.session.add(dummy_answer_2)
     db.session.commit()

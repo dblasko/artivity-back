@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import func
 
 from app import db
-from models import Challenge
+from models import Challenge, ChallengeAnswer
 
 
 class ChallengeRepository:
@@ -42,3 +42,12 @@ class ChallengeRepository:
         db.session.merge(challenge)
         db.session.commit()
         return challenge
+
+    def get_answer(self, user_id, challenge_id):
+        return ChallengeAnswer.query.filter_by(user_id=user_id, challenge_id=challenge_id).first()
+
+    def update_answer(self, challenge_answer):
+        db.session.merge(challenge_answer)
+        db.session.commit()
+        return challenge_answer
+

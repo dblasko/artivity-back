@@ -48,7 +48,22 @@ class ChallengeAnswer(db.Model):
 
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=True)
-    is_public = db.Column(db.Boolean, nullable=True)
+    is_public = db.Column(db.Boolean, nullable=False)
 
     answer = db.Column(db.LargeBinary, nullable=True)
+
+    def json(self):
+        return {
+            "user": {
+                "id": self.user_id,
+                "pseudo": self.user.pseudo
+            },
+            "challenge": self.challenge.json(),
+
+            "start_time": int(self.start_time.timestamp()),
+            "end_time": int(self.start_time.timestamp()) if self.start_time else None,
+            "is_public": self.is_public,
+
+            "data": self.answer.decode("utf-8") if self.answer else None
+        }
 
