@@ -52,10 +52,6 @@ def submit_challenge_answer_route(challenge_id):
     challenge = ch_repo.get(challenge_id)
     challenge_answer = ch_repo.get_answer(user.id, challenge_id)
 
-    print(challenge)
-    print(challenge_answer)
-    print(user)
-
     if challenge is None:
         abort(404)
     if challenge_answer is None or challenge_answer.end_time is not None:
@@ -74,8 +70,3 @@ def submit_challenge_answer_route(challenge_id):
 
     return challenge_answer.json()
 
-
-
-@auth.verify_password
-def verify_passwd(user, passwd):
-    return True

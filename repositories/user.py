@@ -1,4 +1,4 @@
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
 from models import User
@@ -38,6 +38,17 @@ class UserRepository:
         :return: a User instance if found, otherwise None
         """
         return User.query.filter_by(pseudo=pseudo).first()
+
+    def authenticate(self, username, password):
+        user = User.query.filter_by(email=username).first()
+        if user is None:
+            user = User.query.filter_by(pseudo=username).first()
+
+        if user is not None:
+            if not check_password_hash(user.password_hash, password):
+                user = None
+
+        return user   # None if not authenticated
 
     def update(self, user):
         db.session.merge(user)
