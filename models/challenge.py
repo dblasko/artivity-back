@@ -47,8 +47,8 @@ class ChallengeAnswer(db.Model):
     challenge = db.relationship("Challenge", back_populates="user_answers")
 
     start_time = db.Column(db.DateTime, nullable=False)
-    end_time = db.Column(db.DateTime, nullable=False)
-    is_public = db.Column(db.Boolean, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=True)
+    is_public = db.Column(db.Boolean, nullable=True)
 
     answer = db.Column(db.LargeBinary, nullable=True)
 

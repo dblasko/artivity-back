@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from app import app, db
-from models import ChallengeType
+from models import ChallengeType, ChallengeAnswer
 from repositories import UserRepository, ChallengeRepository
 
 
@@ -40,3 +40,20 @@ def populate_dummy_db():
                                         end_datetime=None,
                                         timelimit_seconds=None,
                                         user_created=tuthur)
+
+    dummy_answer_1 = ChallengeAnswer(
+        user=danny,
+        challenge=challenge_1,
+        start_time=datetime.now()
+    )
+    db.session.add(dummy_answer_1)
+    db.session.commit()
+
+    dummy_answer_2 = ChallengeAnswer(
+        user=danny,
+        challenge=challenge_2,
+        start_time=datetime.now()
+    )
+    db.session.add(dummy_answer_2)
+    db.session.commit()
+

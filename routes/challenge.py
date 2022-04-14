@@ -4,9 +4,9 @@ from datetime import datetime
 from flask import Blueprint, jsonify, abort
 from flask_httpauth import HTTPBasicAuth
 
-from repositories import ChallengeRepository
+from auth import auth
+from repositories import ChallengeRepository, UserRepository
 
-auth = HTTPBasicAuth()
 challenge_blueprint = Blueprint("challenge", __name__)
 
 daily_challenge = None
@@ -26,18 +26,32 @@ def daily_challenge_route():
     })
 
 
-@challenge_blueprint.route("/<int:id>")
+@challenge_blueprint.route("/<int:challenge_id>")
 @auth.login_required()
-def get_challenge_route(id):
+def get_challenge_route(challenge_id):
     ch_repo = ChallengeRepository()
 
-    challenge = ch_repo.get(id)
+    challenge = ch_repo.get(challenge_id)
     if challenge is None:
         abort(404)
 
     return jsonify({
         "challenge": challenge.json()
     })
+
+
+@challenge_blueprint.route("/<int:challenge_id>/submit", methods=("POST",))
+@auth.login_required()
+def submit_challenge_answer_route(challenge_id):
+    user_repo = UserRepository()
+    user = user_repo.get_by_pseudo(auth.current_user())
+    if user is None:
+        abort(403)
+
+    
+
+    return 'yay'
+
 
 
 @auth.verify_password

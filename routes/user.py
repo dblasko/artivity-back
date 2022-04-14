@@ -1,7 +1,8 @@
 from flask import Blueprint
 from flask_httpauth import HTTPBasicAuth
 
-auth = HTTPBasicAuth()
+from auth import auth
+
 user_blueprint = Blueprint("user", __name__)
 
 
@@ -11,6 +12,3 @@ def hello_user():
     return 'Hello User!'
 
 
-@auth.verify_password
-def verify_passwd(user, passwd):
-    return True
