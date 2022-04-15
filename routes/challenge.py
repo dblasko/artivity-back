@@ -70,3 +70,16 @@ def submit_challenge_answer_route(challenge_id):
 
     return challenge_answer.json()
 
+@challenge_blueprint.route("/<int:id>/start")
+@auth.login_required()
+def start_challenge(id):
+    ch_repo = ChallengeRepository()
+
+    challenge = ch_repo.start_challenge(id)
+    if challenge is None:
+        abort(404)
+
+    return jsonify({
+        "challenge": challenge.json()
+    }), 200
+    

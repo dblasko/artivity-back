@@ -1,3 +1,4 @@
+from email.policy import default
 from app import db 
 
 import enum
@@ -22,6 +23,9 @@ class Challenge(db.Model):
     user_created = db.relationship("User", back_populates="challenges_created")
 
     user_answers = db.relationship("ChallengeAnswer", back_populates="challenge")
+    
+    user_invitee = db.relationship("ChallengeInvite", back_populates="invitee")
+    user_inviter = db.relationship("ChallengeInvite", back_populates="inviter")
 
     def json(self):
         return {
@@ -67,3 +71,12 @@ class ChallengeAnswer(db.Model):
             "data": self.answer.decode("utf-8") if self.answer else None
         }
 
+class ChallengeInvite(db.Model):
+    inviter_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, primary_key=True)
+    invitee_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, primary_key=True)
+    challenge_id = db.Column(db.Integer, db.ForeignKey("challenge.id"), nullable=False, primary_key=True)
+
+    invite_time = db.Column(db.DateTime, nullable=False)
+
+    invitee = db.relationship("Challenge", foreign_key=invitee_id, back_populates='user_invited')
+    inviter = db.relationship("Challenge", foreign_key=inviter_id, back_populates='user_inviter')

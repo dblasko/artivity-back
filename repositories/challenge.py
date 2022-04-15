@@ -1,7 +1,7 @@
 import random
 from datetime import datetime
 
-from sqlalchemy import func
+from sqlalchemy import func, null
 
 from app import db
 from models import Challenge, ChallengeAnswer
@@ -37,6 +37,15 @@ class ChallengeRepository:
             selected_challenge = self.get(selected_id)
 
         return selected_challenge
+
+    def get_all_pending_challenges(self, user_id):
+        """
+        Get all challenges to which a user is invited (not yet answered)
+        :param user_id: the invited user's id
+        :return: a list of challenges if there are any, otherwise None
+        """
+        return Challenge.query.filter(user_invitee=user_id) #i am STILL unsure of this
+
 
     def update(self, challenge):
         db.session.merge(challenge)
