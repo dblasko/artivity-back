@@ -23,9 +23,7 @@ class Challenge(db.Model):
     user_created = db.relationship("User", back_populates="challenges_created")
 
     user_answers = db.relationship("ChallengeAnswer", back_populates="challenge")
-    
-    user_invitee = db.relationship("ChallengeInvite", back_populates="invitee")
-    user_inviter = db.relationship("ChallengeInvite", back_populates="inviter")
+    invites = db.relationship("ChallengeInvite", back_populates="challenge")
 
     def json(self):
         return {
@@ -71,6 +69,7 @@ class ChallengeAnswer(db.Model):
             "data": self.answer.decode("utf-8") if self.answer else None
         }
 
+
 class ChallengeInvite(db.Model):
     inviter_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, primary_key=True)
     invitee_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, primary_key=True)
@@ -78,5 +77,14 @@ class ChallengeInvite(db.Model):
 
     invite_time = db.Column(db.DateTime, nullable=False)
 
-    invitee = db.relationship("Challenge", foreign_key=invitee_id, back_populates='user_invited')
-    inviter = db.relationship("Challenge", foreign_key=inviter_id, back_populates='user_inviter')
+    invitee = db.relationship("User", foreign_keys=invitee_id, backref=db.backref('challenge_invited'))
+    inviter = db.relationship("User", foreign_keys=inviter_id, backref=db.backref('challenge_inviter'))
+    challenge = db.relationship("Challenge", foreign_keys=challenge_id, back_populates='invites')
+
+    def json(self):
+        return {
+            "user_inviter": self.inviter.json_preview(),
+            "user_invitee": self.invitee.json_preview(),
+            "challenge": self.challenge.json(),
+            "invite_date": int(self.invite_time.timestamp())
+        }

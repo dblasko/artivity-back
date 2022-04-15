@@ -82,4 +82,4 @@ def start_challenge(id):
     return jsonify({
         "challenge": challenge.json()
     }), 200
-    
+

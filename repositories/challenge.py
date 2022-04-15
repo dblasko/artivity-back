@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import func, null
 
 from app import db
-from models import Challenge, ChallengeAnswer
+from models import Challenge, ChallengeAnswer, ChallengeInvite
 
 
 class ChallengeRepository:
@@ -20,6 +20,17 @@ class ChallengeRepository:
         db.session.commit()
         return challenge
 
+    def create_invite(self, inviter_user_id, invitee_user_id, challenge_id):
+        challenge_invite = ChallengeInvite(
+            inviter_id=inviter_user_id,
+            invitee_id=invitee_user_id,
+            challenge_id=challenge_id,
+            invite_time=datetime.now()
+        )
+        db.session.add(challenge_invite)
+        db.session.commit()
+        return challenge_invite
+
     def get(self, challenge_id):
         """
         Get a challenge from its id
@@ -27,6 +38,16 @@ class ChallengeRepository:
         :return: a Challenge instance if it exists, otherwise None
         """
         return Challenge.query.get(challenge_id)
+
+    def get_invite(self, inviter_user_id, invitee_user_id, challenge_id):
+        """
+        Get a challenge invite from its challenge id, inviter id and invitee id
+        :return: a ChallengeInvite instance if it exists, otherwise None
+        """
+        invite = ChallengeInvite.query.filter_by(
+            inviter_id=inviter_user_id, invitee_id=invitee_user_id, challenge_id=challenge_id
+        ).first()
+        return invite
 
     def pick_random(self):
         max_id = db.session.query(func.max(Challenge.id)).scalar()
@@ -38,14 +59,14 @@ class ChallengeRepository:
 
         return selected_challenge
 
-    def get_all_pending_challenges(self, user_id):
+    def get_pending_challenge_invites(self, user_id):
         """
         Get all challenges to which a user is invited (not yet answered)
         :param user_id: the invited user's id
         :return: a list of challenges if there are any, otherwise None
         """
-        return Challenge.query.filter(user_invitee=user_id) #i am STILL unsure of this
-
+        # todo remove completed invites
+        return ChallengeInvite.query.filter_by(invitee_id=user_id).all()
 
     def update(self, challenge):
         db.session.merge(challenge)

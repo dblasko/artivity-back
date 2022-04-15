@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from app import app, db
-from models import ChallengeType, ChallengeAnswer
+from models import ChallengeType, ChallengeAnswer, ChallengeInvite
 from repositories import UserRepository, ChallengeRepository
 
 
@@ -58,4 +58,7 @@ def populate_dummy_db():
     )
     db.session.add(dummy_answer_2)
     db.session.commit()
+
+    challenge_repo.create_invite(tuthur.id, danny.id, challenge_1.id)
+
 

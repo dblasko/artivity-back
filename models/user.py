@@ -11,3 +11,9 @@ class User(db.Model):
 
     challenges_answers = db.relationship("ChallengeAnswer", back_populates="user", lazy=True)
     challenges_created = db.relationship("Challenge", back_populates="user_created", lazy=True)
+
+    def json_preview(self):
+        return {
+            "id": self.id,
+            "pseudo": self.pseudo
+        }

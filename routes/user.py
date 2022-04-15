@@ -2,7 +2,7 @@ from flask import Blueprint, request, abort, jsonify
 from flask_httpauth import HTTPBasicAuth
 
 from auth import auth, generate_token, check_token
-from repositories import UserRepository
+from repositories import UserRepository, ChallengeRepository
 
 user_blueprint = Blueprint("users", __name__)
 
@@ -32,3 +32,20 @@ def user_auth_route():
     return jsonify({
         "token": token
     })
+
+
+@user_blueprint.route("/<int:user_id>/challenges/invites/received")
+@auth.login_required()
+def user_challenge_invites_received(user_id):
+    user_repo = UserRepository()
+    user = user_repo.get(user_id)
+
+    if user is None:
+        abort(404)
+
+    ch_repo = ChallengeRepository()
+    invites = ch_repo.get_pending_challenge_invites(user.id)
+
+    return jsonify(
+        [invite.json() for invite in invites]
+    )
