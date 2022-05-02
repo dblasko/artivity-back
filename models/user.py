@@ -7,7 +7,7 @@ class User(db.Model):
     email = db.Column(db.String(320), unique=True, nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
 
-    bio = db.Column(db.String(250))
+    bio = db.Column(db.String(250), default="", nullable=False)
 
     challenges_answers = db.relationship("ChallengeAnswer", back_populates="user", lazy=True)
     challenges_created = db.relationship("Challenge", back_populates="user_created", lazy=True)
@@ -23,7 +23,12 @@ class User(db.Model):
             "id": self.id,
             "pseudo": self.pseudo,
             "email": self.email,
-            "bio": self.bio,
-            "challenges_created": self.challenges_created,
-            "challenge_answers": self.challenges_answers
+            "bio": self.bio
+        }
+
+    def public_json(self):
+        return {
+            "id": self.id,
+            "pseudo": self.pseudo,
+            "biography": self.bio
         }

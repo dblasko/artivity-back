@@ -44,7 +44,7 @@ def register_user_route():
     return jsonify(user.json()), 200
 
 
-@user_blueprint.route("/<int:user_id>/challenges/invites/received")
+@user_blueprint.route("/<int:user_id>/challenges/invites/received", methods=('GET',))
 @auth.login_required()
 def user_challenge_invites_received(user_id):
     user_repo = UserRepository()
@@ -59,3 +59,21 @@ def user_challenge_invites_received(user_id):
     return jsonify(
         [invite.json() for invite in invites]
     )
+
+
+@user_blueprint.route("/<int:user_id>", methods=('GET',))
+@auth.login_required()
+def user_public_info_route(user_id):
+    user_repo = UserRepository()
+    user = user_repo.get(user_id)
+
+    if user is None:
+        abort(404)
+
+    ch_repo = ChallengeRepository()
+
+    user_info = user.public_json()
+    user_info["challenges_created"] = [ch.json() for ch in ch_repo.get_user_public_created_challenges(user_id)]
+    user_info["challenges_answers"] = [ans.json() for ans in ch_repo.get_user_public_challenge_answers(user_id)]
+
+    return jsonify(user_info), 200

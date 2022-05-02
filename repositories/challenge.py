@@ -103,3 +103,11 @@ class ChallengeRepository:
         else:
             answer = self.create_answer(challenge_id, user_id, is_public)
         return answer
+
+    def get_user_public_created_challenges(self, user_id):
+        challenges = Challenge.query.filter_by(user_created_id=user_id, is_public=True).all()
+        return challenges
+
+    def get_user_public_challenge_answers(self, user_id):
+        answers = ChallengeAnswer.query.filter_by(user_id=user_id, is_public=True).all()
+        return answers

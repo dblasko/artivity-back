@@ -25,6 +25,7 @@ class Challenge(db.Model):
 
     rating = db.Column(db.Float, nullable=True, default=None)
     user_answers_count = db.Column(db.Integer, nullable=False, default=0)
+    is_public = db.Column(db.Boolean, default=True, nullable=False)
 
     user_created_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     user_created = db.relationship("User", back_populates="challenges_created")
