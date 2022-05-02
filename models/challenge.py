@@ -19,6 +19,9 @@ class Challenge(db.Model):
     end_datetime = db.Column(db.DateTime, nullable=True)
     timelimit_seconds = db.Column(db.Integer, nullable=True)
 
+    rating = db.Column(db.Float, nullable=True, default=None)
+    user_answers_count = db.Column(db.Integer, nullable=False, default=0)
+
     user_created_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     user_created = db.relationship("User", back_populates="challenges_created")
 
@@ -37,7 +40,9 @@ class Challenge(db.Model):
             "user_created": {
                 "id": self.user_created_id,
                 "pseudo": self.user_created.pseudo
-            }
+            },
+            "rating": self.rating,
+            "answer_count": self.user_answers_count
         }
 
 

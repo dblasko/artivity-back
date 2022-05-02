@@ -7,12 +7,6 @@ from repositories import UserRepository, ChallengeRepository
 user_blueprint = Blueprint("users", __name__)
 
 
-@user_blueprint.route('/hello')
-@auth.login_required()
-def hello_user():
-    return 'Hello User!'
-
-
 @user_blueprint.route("/auth/login", methods=('POST',))
 def user_auth_route():
     body = request.json   # returns 400 if malformed / not json

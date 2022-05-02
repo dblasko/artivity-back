@@ -68,6 +68,9 @@ def submit_challenge_answer_route(challenge_id):
     challenge_answer.answer = ans_bytes
     ch_repo.update_answer(challenge_answer)
 
+    challenge.user_answers_count += 1
+    ch_repo.update(challenge)
+
     return challenge_answer.json()
 
 
