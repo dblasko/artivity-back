@@ -63,7 +63,7 @@ class ChallengeAnswer(db.Model):
             "challenge": self.challenge.json(),
 
             "start_time": int(self.start_time.timestamp()),
-            "end_time": int(self.start_time.timestamp()) if self.start_time else None,
+            "end_time": int(self.end_time.timestamp()) if self.end_time else None,
             "is_public": self.is_public,
 
             "data": self.answer.decode("utf-8") if self.answer else None

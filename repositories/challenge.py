@@ -31,6 +31,17 @@ class ChallengeRepository:
         db.session.commit()
         return challenge_invite
 
+    def create_answer(self, challenge_id, user_id, is_public):
+        challenge_answer = ChallengeAnswer(
+            user_id=user_id,
+            challenge_id=challenge_id,
+            is_public=is_public,
+            start_time=datetime.now()
+        )
+        db.session.add(challenge_answer)
+        db.session.commit()
+        return challenge_answer
+
     def get(self, challenge_id):
         """
         Get a challenge from its id
@@ -81,3 +92,14 @@ class ChallengeRepository:
         db.session.commit()
         return challenge_answer
 
+    def start_challenge(self, challenge_id, user_id, is_public):
+        answer = self.get_answer(challenge_id=challenge_id, user_id=user_id)
+        if answer:
+            answer.end_time = None
+            answer.start_time = datetime.now()
+            answer.answer = None
+            answer.is_public = is_public
+            self.update_answer(answer)
+        else:
+            answer = self.create_answer(challenge_id, user_id, is_public)
+        return answer
