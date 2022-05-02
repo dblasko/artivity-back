@@ -41,7 +41,7 @@ def register_user_route():
     if user is None:
         abort(401)
 
-    return jsonify(user.json())
+    return jsonify(user.json()), 200
 
 
 @user_blueprint.route("/<int:user_id>/challenges/invites/received")

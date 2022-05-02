@@ -10,6 +10,10 @@ class ChallengeType(enum.Enum):
     photo = 5
 
 
+def get_challenge_type(typename : str):
+    return ChallengeType[typename]
+
+
 class Challenge(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     subject = db.Column(db.String(320), nullable=False)

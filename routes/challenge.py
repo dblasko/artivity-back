@@ -1,10 +1,10 @@
 import random
 from datetime import datetime
 
-from flask import Blueprint, jsonify, abort, request, Response
-from flask_httpauth import HTTPBasicAuth
+from flask import Blueprint, jsonify, abort, request
 
 from auth import auth
+from models import get_challenge_type
 from repositories import ChallengeRepository, UserRepository
 
 challenge_blueprint = Blueprint("challenge", __name__)
@@ -90,3 +90,39 @@ def start_challenge(challenge_id):
     return jsonify({
         "challenge": challenge.json()
     }), 200
+
+
+@challenge_blueprint.route("", methods=("POST",))
+@auth.login_required()
+def create_challenge_route():
+    body = request.json  # returns 400 if malformed / not json
+    print(body)
+    fields = {"subject", "title", "type", "start", "end", "timelimit", "creator_id"}
+    for field in fields:
+        if field not in body:
+            abort(400)
+
+    start = body["start"] if body["start"] is not None else datetime.now()
+    try:
+        ch_type = get_challenge_type(body["type"])
+    except KeyError:
+        abort(400)
+
+    creator_id = body["creator_id"]
+
+    user_repo = UserRepository()
+    creator = user_repo.get(creator_id)
+    if creator is None:
+        abort(404)
+
+    ch_repo = ChallengeRepository()
+    challenge = ch_repo.create(subject=body["subject"],
+                               title=body["title"],
+                               type=ch_type,
+                               start_datetime=start,
+                               end_datetime=body["end"],
+                               timelimit_seconds=body["timelimit"],
+                               user_created=creator
+                               )
+
+    return jsonify(challenge.json()), 200
