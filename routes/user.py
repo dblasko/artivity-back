@@ -28,6 +28,22 @@ def user_auth_route():
     })
 
 
+@user_blueprint.route("/", methods=('POST',))
+def register_user_route():
+    body = request.json  # returns 400 if malformed / not json
+    fields = {"pseudo", "password", "email"}
+    for field in fields:
+        if field not in body:
+            abort(400)
+
+    user_repo = UserRepository()
+    user = user_repo.create(**body)
+    if user is None:
+        abort(401)
+
+    return jsonify(user.json())
+
+
 @user_blueprint.route("/<int:user_id>/challenges/invites/received")
 @auth.login_required()
 def user_challenge_invites_received(user_id):

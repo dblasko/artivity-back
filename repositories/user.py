@@ -1,3 +1,4 @@
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
@@ -7,12 +8,15 @@ from models import User
 class UserRepository:
 
     def create(self, pseudo, email, password):
-        user = User(
-            pseudo=pseudo, email=email,
-            password_hash=generate_password_hash(password)
-        )
-        db.session.add(user)
-        db.session.commit()
+        try:
+            user = User(
+                pseudo=pseudo, email=email,
+                password_hash=generate_password_hash(password)
+            )
+            db.session.add(user)
+            db.session.commit()
+        except IntegrityError:
+            return None
         return user
 
     def get(self, user_id):

@@ -17,3 +17,13 @@ class User(db.Model):
             "id": self.id,
             "pseudo": self.pseudo
         }
+
+    def json(self):
+        return {
+            "id": self.id,
+            "pseudo": self.pseudo,
+            "email": self.email,
+            "bio": self.bio,
+            "challenges_created": self.challenges_created,
+            "challenge_answers": self.challenges_answers
+        }
