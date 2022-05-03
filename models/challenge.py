@@ -23,7 +23,7 @@ class Challenge(db.Model):
     end_datetime = db.Column(db.DateTime, nullable=True)
     timelimit_seconds = db.Column(db.Integer, nullable=True)
 
-    rating = db.Column(db.Float, nullable=True, default=None)
+    rating = db.Column(db.Integer, nullable=False, default=0)
     user_answers_count = db.Column(db.Integer, nullable=False, default=0)
     is_public = db.Column(db.Boolean, default=True, nullable=False)
 
