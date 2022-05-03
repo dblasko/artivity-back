@@ -44,11 +44,11 @@ def register_user_route():
     return jsonify(user.json()), 200
 
 
-@user_blueprint.route("/<int:user_id>/challenges/invites/received", methods=('GET',))
+@user_blueprint.route("/challenges/invites/received", methods=('GET',))
 @auth.login_required()
-def user_challenge_invites_received(user_id):
+def user_challenge_invites_received():
     user_repo = UserRepository()
-    user = user_repo.get(user_id)
+    user = user_repo.get_by_pseudo(auth.current_user())
 
     if user is None:
         abort(404)
