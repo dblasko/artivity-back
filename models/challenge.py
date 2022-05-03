@@ -1,7 +1,9 @@
 from email.policy import default
-from app import db 
+from app import db
 
 import enum
+
+
 class ChallengeType(enum.Enum):
     text = 1
     video = 2
@@ -10,7 +12,7 @@ class ChallengeType(enum.Enum):
     photo = 5
 
 
-def get_challenge_type(typename : str):
+def get_challenge_type(typename: str):
     return ChallengeType[typename]
 
 
@@ -27,8 +29,14 @@ class Challenge(db.Model):
     user_answers_count = db.Column(db.Integer, nullable=False, default=0)
     is_public = db.Column(db.Boolean, default=True, nullable=False)
 
+    is_collab = db.Column(db.Boolean, default=False, nullable=False)
+    whos_turn_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+    whos_turn = db.relationship("User", backref=db.backref("collaborative_challenges_toplay"),
+                                foreign_keys="Challenge.whos_turn_id")
+
     user_created_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    user_created = db.relationship("User", back_populates="challenges_created")
+    user_created = db.relationship("User", back_populates="challenges_created",
+                                   foreign_keys="Challenge.user_created_id")
 
     user_answers = db.relationship("ChallengeAnswer", back_populates="challenge")
     invites = db.relationship("ChallengeInvite", back_populates="challenge")
@@ -42,12 +50,11 @@ class Challenge(db.Model):
             "start": int(self.start_datetime.timestamp()),
             "end": int(self.end_datetime.timestamp()) if self.end_datetime else None,
             "timelimit": self.timelimit_seconds if self.timelimit_seconds else None,
-            "user_created": {
-                "id": self.user_created_id,
-                "pseudo": self.user_created.pseudo
-            },
+            "user_created": self.user_created.json_preview(),
             "rating": self.rating,
-            "answer_count": self.user_answers_count
+            "answer_count": self.user_answers_count,
+            "is_collaborative": self.is_collab,
+            "collab_next_user": self.whos_turn.json_preview() if self.whos_turn else None
         }
 
 

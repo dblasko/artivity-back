@@ -83,12 +83,19 @@ def start_challenge(challenge_id):
         abort(401)
 
     ch_repo = ChallengeRepository()
-    challenge = ch_repo.start_challenge(challenge_id, user.id, False)
-    if challenge is None:
+    challenge_ans = ch_repo.start_challenge(challenge_id, user.id, False)
+    if challenge_ans is None:
         abort(404)
 
+    challenge = challenge_ans.challenge
+    if challenge.is_collab and challenge.whos_turn_id != user.id:
+        abort(403)
+
+    if not challenge.is_public and challenge.user_created_id != user.id and not ch_repo.was_invited(user.id, challenge_id):
+        abort(403)
+
     return jsonify({
-        "challenge": challenge.json()
+        "challenge": challenge_ans.json()
     }), 200
 
 
@@ -118,7 +125,7 @@ def create_challenge_route():
     ch_repo = ChallengeRepository()
     challenge = ch_repo.create(subject=body["subject"],
                                title=body["title"],
-                               type=ch_type,
+                               ch_type=ch_type,
                                start_datetime=start,
                                end_datetime=body["end"],
                                timelimit_seconds=body["timelimit"],
@@ -126,3 +133,63 @@ def create_challenge_route():
                                )
 
     return jsonify(challenge.json()), 200
+
+
+@challenge_blueprint.route("/<int:challenge_id>/possible_next_users", methods=("GET",))
+@auth.login_required()
+def get_collaborative_challenge_available_next_users_route(challenge_id):
+    # check challenge exists and collaborative (and not public)
+    ch_repo = ChallengeRepository()
+    challenge = ch_repo.get(challenge_id)
+    if challenge is None or not challenge.is_collab or challenge.is_public:  # collaborative challenges can't be public
+        abort(404)
+
+    # check user has access (was invited)
+    user_repo = UserRepository()
+    user = user_repo.get_by_pseudo(auth.current_user())
+    if not ch_repo.was_invited(user.id, challenge_id) and challenge.user_created_id != user.id:
+        abort(403)
+
+    # query repository
+    users = ch_repo.collab_get_available_next_users(challenge_id)
+    return jsonify(
+        [user.json_preview() for user in users]
+    ), 200
+
+
+@challenge_blueprint.route("/<int:challenge_id>/set_next", methods=("POST",))
+@auth.login_required()
+def set_collab_challenge_next_user_route(challenge_id):
+    # check challenge exists and collaborative (and not public)
+    ch_repo = ChallengeRepository()
+    challenge = ch_repo.get(challenge_id)
+    if challenge is None or not challenge.is_collab or challenge.is_public:  # collaborative challenges can't be public
+        abort(404)
+
+    # check user has access (is whos_turn user)
+    user_repo = UserRepository()
+    user = user_repo.get_by_pseudo(auth.current_user())
+    if user.id != challenge.whos_turn_id:
+        abort(403)
+
+    # user must have completed its answer (end_time is set)
+    answer = ch_repo.get_answer(user.id, challenge_id)
+    if answer is None or answer.end_time is None:
+        abort(403)
+
+    # designated user must be in available list
+    body = request.json
+    if "user_id" not in body:
+        abort(400)
+
+    designated_user = user_repo.get(body["user_id"])
+    available_users = ch_repo.collab_get_available_next_users(challenge_id)
+    if designated_user not in available_users:
+        abort(403)
+
+    # update challenge
+    challenge.whos_turn = designated_user
+    ch_repo.update(challenge)
+
+    return jsonify(challenge.json()), 200
+

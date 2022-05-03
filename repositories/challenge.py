@@ -4,17 +4,29 @@ from datetime import datetime
 from sqlalchemy import func, null
 
 from app import db
-from models import Challenge, ChallengeAnswer, ChallengeInvite
+from models import Challenge, ChallengeAnswer, ChallengeInvite, User
 
 
 class ChallengeRepository:
 
-    def create(self, subject, title, type, start_datetime, end_datetime, timelimit_seconds, user_created):
+    def create(self, subject, title, ch_type, start_datetime, end_datetime, timelimit_seconds, user_created):
         challenge = Challenge(
             subject=subject, title=title, 
-            type=type, start_datetime=start_datetime,
+            type=ch_type, start_datetime=start_datetime,
             end_datetime=end_datetime, timelimit_seconds=timelimit_seconds,
             user_created=user_created
+        )
+        db.session.add(challenge)
+        db.session.commit()
+        return challenge
+
+    def create_collaborative_challenge(self, subject, title, ch_type, start_datetime, end_datetime, timelimit_seconds, user_created):
+        challenge = Challenge(
+            subject=subject, title=title,
+            type=ch_type, start_datetime=start_datetime,
+            end_datetime=end_datetime, timelimit_seconds=timelimit_seconds,
+            user_created=user_created,
+            is_collab=True, whos_turn=user_created, is_public=False
         )
         db.session.add(challenge)
         db.session.commit()
@@ -59,6 +71,15 @@ class ChallengeRepository:
             inviter_id=inviter_user_id, invitee_id=invitee_user_id, challenge_id=challenge_id
         ).first()
         return invite
+
+    def was_invited(self, invitee_id, challenge_id):
+        """
+        Returns true if the invitee user has an invite for the specified challenge
+        :param invitee_id: the invited user's id
+        :param challenge_id: the challenge id
+        :return: a boolean
+        """
+        return ChallengeInvite.query.filter_by(invitee_id=invitee_id, challenge_id=challenge_id).count() > 0
 
     def pick_random(self):
         max_id = db.session.query(func.max(Challenge.id)).scalar()
@@ -111,3 +132,19 @@ class ChallengeRepository:
     def get_user_public_challenge_answers(self, user_id):
         answers = ChallengeAnswer.query.filter_by(user_id=user_id, is_public=True).all()
         return answers
+
+    def collab_get_available_next_users(self, challenge_id):
+        # user must have been invited
+        # user should not have a completed answer
+        # user should not be current whos_turn
+        users = db.session.query(User)\
+            .select_from(ChallengeInvite) \
+            .filter(ChallengeInvite.challenge_id == challenge_id) \
+            .join(User, User.id == ChallengeInvite.invitee_id)\
+            .join(Challenge, Challenge.id == ChallengeInvite.challenge_id)\
+            .filter(Challenge.whos_turn_id != User.id)\
+            .outerjoin(ChallengeAnswer, User.id == ChallengeAnswer.user_id)\
+            .filter(ChallengeAnswer.end_time == None)
+
+        return users
+
