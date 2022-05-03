@@ -35,6 +35,11 @@ def get_challenge_route(challenge_id):
     if challenge is None:
         abort(404)
 
+    user_repo = UserRepository()
+    user = user_repo.get_by_pseudo(auth.current_user())
+    if not challenge.is_public and challenge.user_created_id != user.id and not ch_repo.was_invited(user.id, challenge_id):
+        abort(403)
+
     return jsonify({
         "challenge": challenge.json()
     })
@@ -193,3 +198,33 @@ def set_collab_challenge_next_user_route(challenge_id):
 
     return jsonify(challenge.json()), 200
 
+
+@challenge_blueprint.route("/<int:challenge_id>/invite", methods=("PUT",))
+@auth.login_required()
+def invite_to_challenge_route(challenge_id):
+    # check challenge exists
+    ch_repo = ChallengeRepository()
+    challenge = ch_repo.get(challenge_id)
+    if challenge is None:
+        abort(404)
+
+    # if challenge private, check user has access to challenge
+    user_repo = UserRepository()
+    user = user_repo.get_by_pseudo(auth.current_user())
+    if not challenge.is_public and challenge.user_created_id != user.id and not ch_repo.was_invited(user.id, challenge_id):
+        abort(403)
+
+    # create invite
+    body = request.json
+    if "user_id" not in body:
+        abort(400)
+
+    user_invited = user_repo.get(body["user_id"])
+    if user_invited is None:
+        abort(404)
+
+    invite = ch_repo.get_invite(user.id, user_invited.id, challenge_id)
+    if invite is None:
+        invite = ch_repo.create_invite(user.id, user_invited.id, challenge_id)
+
+    return jsonify(invite.json()), 200
