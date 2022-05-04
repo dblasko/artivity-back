@@ -43,7 +43,7 @@ def populate_dummy_db():
 
     challenge_2 = challenge_repo.create(subject="Chofite",
                                         title="Bolopop",
-                                        ch_type=ChallengeType.text,
+                                        ch_type=ChallengeType.drawing,
                                         start_datetime=datetime.now(),
                                         end_datetime=datetime(day=12, month=5, year=2022),
                                         timelimit_seconds=None,

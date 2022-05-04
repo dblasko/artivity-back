@@ -1,8 +1,7 @@
-from datetime import datetime
-from email.policy import default
-from app import db
-
 import enum
+from datetime import datetime
+
+from app import db
 
 
 class ChallengeType(enum.Enum):
@@ -77,13 +76,12 @@ class ChallengeAnswer(db.Model):
 
     answer = db.Column(db.LargeBinary, nullable=True)
 
-    def json(self):
-        return {
+    def json(self, no_challenge=False):
+        data = {
             "user": {
                 "id": self.user_id,
                 "pseudo": self.user.pseudo
             },
-            "challenge": self.challenge.json(),
 
             "start_time": int(self.start_time.timestamp()),
             "end_time": int(self.end_time.timestamp()) if self.end_time else None,
@@ -91,6 +89,11 @@ class ChallengeAnswer(db.Model):
 
             "data": self.answer.decode("utf-8") if self.answer else None
         }
+
+        if not no_challenge:
+            data["challenge"] = self.challenge.json()
+
+        return data
 
 
 class ChallengeInvite(db.Model):

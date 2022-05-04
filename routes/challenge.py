@@ -228,3 +228,21 @@ def invite_to_challenge_route(challenge_id):
         invite = ch_repo.create_invite(user.id, user_invited.id, challenge_id)
 
     return jsonify(invite.json()), 200
+
+
+@challenge_blueprint.route("/<int:challenge_id>/answers")
+@auth.login_required()
+def get_challenge_answers(challenge_id):
+    ch_repo = ChallengeRepository()
+    challenge = ch_repo.get(challenge_id)
+    if challenge is None:
+        abort(404)
+
+    answers = ch_repo.get_public_challenge_answers(challenge_id)
+
+    return jsonify({
+        "count": len(answers),
+        "challenge": challenge.json(),
+        "answers": [answer.json(no_challenge=True) for answer in answers]
+    }), 200
+

@@ -148,3 +148,5 @@ class ChallengeRepository:
 
         return users
 
+    def get_public_challenge_answers(self, challenge_id):
+        return ChallengeAnswer.query.filter_by(is_public=True, challenge_id=challenge_id).all()
