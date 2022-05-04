@@ -65,6 +65,14 @@ def populate_dummy_db():
                                         timelimit_seconds=None,
                                         user_created=tuthur)
 
+    challenge_5 = challenge_repo.create(subject="Catch the Trump",
+                                        title="Photo politique",
+                                        ch_type=ChallengeType.photo,
+                                        start_datetime=datetime.now(),
+                                        end_datetime=datetime(day=12, month=5, year=2022),
+                                        timelimit_seconds=None,
+                                        user_created=tuthur)
+
 
     collab_challenge = challenge_repo.create_collaborative_challenge(
         subject="Draw what you want",
@@ -98,6 +106,7 @@ def populate_dummy_db():
     challenge_repo.create_invite(tuthur.id, danny.id, challenge_2.id)
     challenge_repo.create_invite(tuthur.id, danny.id, challenge_4.id)
     challenge_repo.create_invite(tuthur.id, danny.id, challenge_3.id)
+    challenge_repo.create_invite(tuthur.id, danny.id, challenge_5.id)
     challenge_repo.create_invite(danny.id, user_a.id, collab_challenge.id)
     challenge_repo.create_invite(danny.id, user_b.id, collab_challenge.id)
     challenge_repo.create_invite(danny.id, user_c.id, collab_challenge.id)
