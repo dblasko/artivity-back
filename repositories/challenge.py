@@ -100,6 +100,24 @@ class ChallengeRepository:
 
         return challenges
 
+    def pick_random_answers(self, n):
+        answers = set()
+        max_answers = ChallengeAnswer.query.count()
+
+        while len(answers) < min(max_answers, n):
+            max_ch_id = db.session.query(func.max(ChallengeAnswer.challenge_id)).scalar()
+            max_us_id = db.session.query(func.max(ChallengeAnswer.user_id)).scalar()
+
+            selected_answer = None
+            while selected_answer is None:
+                sel_ch_id = random.randint(0, max_ch_id)
+                sel_us_id = random.randint(0, max_us_id)
+                selected_answer = self.get_answer(sel_us_id, sel_ch_id)
+
+            answers.add(selected_answer)
+
+        return answers
+
     def get_pending_challenge_invites(self, user_id):
         """
         Get all challenges to which a user is invited (not yet answered)

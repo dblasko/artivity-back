@@ -260,6 +260,20 @@ def get_today_challenge_selection_route():
     ), 200
 
 
+@challenge_blueprint.route("/answers/selection", methods=("GET",))
+@auth.login_required()
+def get_answer_selection_route():
+    ch_repo = ChallengeRepository()
+
+    timestamp = int(datetime.today().timestamp()) // (24 * 3600)
+    random.seed(timestamp)
+    answers = ch_repo.pick_random_answers(6)
+
+    return jsonify(
+        [answer.json() for answer in answers]
+    ), 200
+
+
 @challenge_blueprint.route("/search", methods=("GET",))
 @auth.login_required()
 def challenge_search():

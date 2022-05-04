@@ -54,7 +54,7 @@ def populate_dummy_db():
                                         ch_type=ChallengeType.sound,
                                         start_datetime=datetime.now(),
                                         end_datetime=datetime(day=12, month=5, year=2022),
-                                        timelimit_seconds=None,
+                                        timelimit_seconds=90,
                                         user_created=tuthur)
 
     challenge_2 = challenge_repo.create(subject="Chofite",
