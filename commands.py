@@ -37,15 +37,15 @@ def populate_dummy_db():
                                         title="Balade champêtre",
                                         ch_type=ChallengeType.drawing,
                                         start_datetime=datetime.now(),
-                                        end_datetime=None,
-                                        timelimit_seconds=None,
+                                        end_datetime=datetime(day=12, month=5, year=2022),
+                                        timelimit_seconds=120,
                                         user_created=danny)
 
     challenge_2 = challenge_repo.create(subject="Chofite",
                                         title="Bolopop",
                                         ch_type=ChallengeType.text,
                                         start_datetime=datetime.now(),
-                                        end_datetime=None,
+                                        end_datetime=datetime(day=12, month=5, year=2022),
                                         timelimit_seconds=None,
                                         user_created=tuthur)
 
