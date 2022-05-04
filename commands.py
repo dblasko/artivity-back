@@ -116,5 +116,10 @@ def populate_dummy_db():
     challenge_repo.create_invite(danny.id, user_g.id, collab_challenge.id)
     challenge_repo.create_invite(danny.id, user_h.id, collab_challenge.id)
 
+    danny.friends.append(user_a)
+    user_a.friends.append(danny)
+    danny.friends.append(tuthur)
+    tuthur.friends.append(danny)
+
 
 
