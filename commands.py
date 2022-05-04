@@ -51,7 +51,7 @@ def populate_dummy_db():
 
     challenge_3 = challenge_repo.create(subject="Chantez votre chanson favorite",
                                         title="Karaoké",
-                                        ch_type=ChallengeType.audio,
+                                        ch_type=ChallengeType.sound,
                                         start_datetime=datetime.now(),
                                         end_datetime=datetime(day=12, month=5, year=2022),
                                         timelimit_seconds=None,
@@ -95,6 +95,8 @@ def populate_dummy_db():
 
     challenge_repo.create_invite(tuthur.id, danny.id, challenge_1.id)
     challenge_repo.create_invite(tuthur.id, danny.id, challenge_2.id)
+    challenge_repo.create_invite(tuthur.id, danny.id, challenge_4.id)
+    challenge_repo.create_invite(tuthur.id, danny.id, challenge_3.id)
     challenge_repo.create_invite(danny.id, user_a.id, collab_challenge.id)
     challenge_repo.create_invite(danny.id, user_b.id, collab_challenge.id)
     challenge_repo.create_invite(danny.id, user_c.id, collab_challenge.id)
