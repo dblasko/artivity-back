@@ -232,7 +232,7 @@ def invite_to_challenge_route(challenge_id):
 
 @challenge_blueprint.route("/<int:challenge_id>/answers")
 @auth.login_required()
-def get_challenge_answers(challenge_id):
+def get_challenge_answers_route(challenge_id):
     ch_repo = ChallengeRepository()
     challenge = ch_repo.get(challenge_id)
     if challenge is None:
@@ -245,4 +245,18 @@ def get_challenge_answers(challenge_id):
         "challenge": challenge.json(),
         "answers": [answer.json(no_challenge=True) for answer in answers]
     }), 200
+
+
+@challenge_blueprint.route("/selection")
+@auth.login_required()
+def get_today_challenge_selection_route():
+    ch_repo = ChallengeRepository()
+
+    timestamp = int(datetime.today().timestamp()) // (24 * 3600)
+    random.seed(timestamp)
+    challenges = ch_repo.pick_n_random(6)
+
+    return jsonify(
+        [challenge.json() for challenge in challenges]
+    ), 200
 

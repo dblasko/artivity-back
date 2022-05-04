@@ -91,6 +91,15 @@ class ChallengeRepository:
 
         return selected_challenge
 
+    def pick_n_random(self, n):
+        challenges = set()
+        max_challenges = Challenge.query.count()
+
+        while len(challenges) < min(max_challenges, n):
+            challenges.add(self.pick_random())
+
+        return challenges
+
     def get_pending_challenge_invites(self, user_id):
         """
         Get all challenges to which a user is invited (not yet answered)
