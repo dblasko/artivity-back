@@ -56,9 +56,11 @@ def user_challenge_invites_received():
     ch_repo = ChallengeRepository()
     invites = ch_repo.get_pending_challenge_invites(user.id)
 
-    return jsonify(
+    return jsonify({
+        "count": len(invites),
+        "invites":
         [invite.json() for invite in invites]
-    )
+    }), 200
 
 
 @user_blueprint.route("/<int:user_id>", methods=('GET',))
