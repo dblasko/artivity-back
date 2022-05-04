@@ -96,7 +96,6 @@ def start_challenge(challenge_id):
 @auth.login_required()
 def create_challenge_route():
     body = request.json  # returns 400 if malformed / not json
-    print(body)
     fields = {"subject", "title", "type", "start", "end", "timelimit", "creator_id"}
     for field in fields:
         if field not in body:
