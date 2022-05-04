@@ -78,6 +78,7 @@ def populate_dummy_db():
     db.session.commit()
 
     challenge_repo.create_invite(tuthur.id, danny.id, challenge_1.id)
+    challenge_repo.create_invite(tuthur.id, danny.id, challenge_2.id)
     challenge_repo.create_invite(danny.id, user_a.id, collab_challenge.id)
     challenge_repo.create_invite(danny.id, user_b.id, collab_challenge.id)
     challenge_repo.create_invite(danny.id, user_c.id, collab_challenge.id)
