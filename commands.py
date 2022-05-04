@@ -121,5 +121,8 @@ def populate_dummy_db():
     danny.friends.append(tuthur)
     tuthur.friends.append(danny)
 
+    user_repo.update(danny)
+    user_repo.update(user_a)
+    user_repo.update(tuthur)
 
 
