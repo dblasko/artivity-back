@@ -49,6 +49,22 @@ def populate_dummy_db():
                                         timelimit_seconds=None,
                                         user_created=tuthur)
 
+    challenge_3 = challenge_repo.create(subject="Chantez votre chanson favorite",
+                                        title="Karaoké",
+                                        ch_type=ChallengeType.audio,
+                                        start_datetime=datetime.now(),
+                                        end_datetime=datetime(day=12, month=5, year=2022),
+                                        timelimit_seconds=None,
+                                        user_created=tuthur)
+
+    challenge_4 = challenge_repo.create(subject="Un sentier d'automne",
+                                        title="Exprimez vos pensées profondes",
+                                        ch_type=ChallengeType.text,
+                                        start_datetime=datetime.now(),
+                                        end_datetime=datetime(day=12, month=5, year=2022),
+                                        timelimit_seconds=None,
+                                        user_created=tuthur)
+
     collab_challenge = challenge_repo.create_collaborative_challenge(
         subject="Draw what you want",
         title="Collaborative mayhem",
