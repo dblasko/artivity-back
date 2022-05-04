@@ -2,7 +2,7 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
-from models import User
+from models import User, friendship
 
 
 class UserRepository:
@@ -58,3 +58,6 @@ class UserRepository:
         db.session.merge(user)
         db.session.commit()
         return user
+
+    def search(self, query):
+        return User.query.filter(User.pseudo.ilike(query+'%')).limit(3).all()

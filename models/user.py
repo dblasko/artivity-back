@@ -1,5 +1,10 @@
 from app import db
 
+friendship = db.Table("friendship",
+                      db.Column("left_friend_id", db.Integer, db.ForeignKey("user.id"), primary_key=True),
+                      db.Column("right_friend_id", db.Integer, db.ForeignKey("user.id"), primary_key=True)
+                      )
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -12,6 +17,12 @@ class User(db.Model):
     challenges_answers = db.relationship("ChallengeAnswer", back_populates="user", lazy=True)
     challenges_created = db.relationship("Challenge", back_populates="user_created", lazy=True,
                                          primaryjoin="User.id==Challenge.user_created_id")
+
+    friends = db.relationship("User", secondary=friendship,
+                              primaryjoin=id == friendship.c.left_friend_id,
+                              secondaryjoin=id == friendship.c.right_friend_id,
+                              backref="friendship"
+                              )
 
     def json_preview(self):
         return {
@@ -33,3 +44,4 @@ class User(db.Model):
             "pseudo": self.pseudo,
             "biography": self.bio
         }
+

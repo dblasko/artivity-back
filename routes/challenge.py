@@ -108,7 +108,6 @@ def start_challenge(challenge_id):
 @auth.login_required()
 def create_challenge_route():
     body = request.json  # returns 400 if malformed / not json
-    print(body)
     fields = {"subject", "title", "type", "start", "end", "timelimit", "creator_id"}
     for field in fields:
         if field not in body:
@@ -246,7 +245,6 @@ def get_challenge_answers_route(challenge_id):
         "answers": [answer.json(no_challenge=True) for answer in answers]
     }), 200
 
-
 @challenge_blueprint.route("/selection")
 @auth.login_required()
 def get_today_challenge_selection_route():
@@ -259,4 +257,18 @@ def get_today_challenge_selection_route():
     return jsonify(
         [challenge.json() for challenge in challenges]
     ), 200
+
+
+@challenge_blueprint.route("/search", methods=("GET",))
+@auth.login_required()
+def challenge_search():
+    data = request.json
+    if "query" not in data:
+        abort(400)
+
+    query = data["query"]
+    ch_repo = ChallengeRepository()
+    search = ch_repo.search(query)
+
+    return jsonify([u.json() for u in search]), 200
 
