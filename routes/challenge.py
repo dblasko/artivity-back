@@ -245,3 +245,15 @@ def get_challenge_answers(challenge_id):
         "answers": [answer.json(no_challenge=True) for answer in answers]
     }), 200
 
+@challenge_blueprint.route("/search", methods=("GET",))
+@auth.login_required()
+def challenge_search():
+    data = request.json
+    if "query" not in data:
+        abort(400)
+
+    query = data["query"]
+    ch_repo = ChallengeRepository()
+    search = ch_repo.search(query)
+
+    return jsonify([u.json() for u in search]), 200

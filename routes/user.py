@@ -147,3 +147,16 @@ def user_remove_friend():
     user_repo.update(user)
 
     return jsonify([friend.json() for friend in user.friends]), 200
+
+@user_blueprint.route("/search", methods=("GET",))
+@auth.login_required()
+def user_search():
+    data = request.json
+    if "query" not in data:
+        abort(400)
+
+    query = data["query"]
+    user_repo = UserRepository()
+    search = user_repo.search(query)
+
+    return jsonify([u.json() for u in search]), 200

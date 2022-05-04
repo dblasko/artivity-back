@@ -59,3 +59,5 @@ class UserRepository:
         db.session.commit()
         return user
 
+    def search(self, query):
+        return User.query.filter(User.pseudo.ilike(query+'%')).limit(3).all()

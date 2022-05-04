@@ -45,12 +45,3 @@ class User(db.Model):
             "biography": self.bio
         }
 
-
-class Friend_Invite(db.Model):
-    inviter_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, primary_key=True)
-    invitee_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, primary_key=True)
-
-    invite_time = db.Column(db.DateTime, nullable=False)
-
-    invitee = db.relationship("User", foreign_keys=invitee_id, backref=db.backref('friend_invited'))
-    inviter = db.relationship("User", foreign_keys=inviter_id, backref=db.backref('friend_inviter'))
