@@ -88,7 +88,7 @@ def start_challenge(challenge_id):
         abort(401)
 
     ch_repo = ChallengeRepository()
-    challenge_ans = ch_repo.start_challenge(challenge_id, user.id, False)
+    challenge_ans = ch_repo.start_challenge(challenge_id, user.id, True)
     if challenge_ans is None:
         abort(404)
 
@@ -244,6 +244,7 @@ def get_challenge_answers_route(challenge_id):
         "challenge": challenge.json(),
         "answers": [answer.json(no_challenge=True) for answer in answers]
     }), 200
+
 
 @challenge_blueprint.route("/selection")
 @auth.login_required()
