@@ -42,6 +42,10 @@ class Challenge(db.Model):
     invites = db.relationship("ChallengeInvite", back_populates="challenge")
 
     def json(self):
+        time_to_end = int(self.end_datetime.timestamp() - datetime.now().timestamp()) if self.end_datetime else 0
+        if time_to_end < 0:
+            time_to_end = 0
+
         return {
             "id": self.id,
             "title": self.title,
@@ -49,6 +53,7 @@ class Challenge(db.Model):
             "type": self.type.name,
             "start": int(self.start_datetime.timestamp()),
             "end": int(self.end_datetime.timestamp()) if self.end_datetime else None,
+            "time_remaining": time_to_end,
             "timelimit": self.timelimit_seconds if self.timelimit_seconds else None,
             "user_created": self.user_created.json_preview(),
             "rating": self.rating,
