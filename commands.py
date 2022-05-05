@@ -126,3 +126,67 @@ def populate_dummy_db():
     user_repo.update(tuthur)
 
 
+
+    demo_challenge_1 = challenge_repo.create(
+        subject="Dessine-moi un mouton",
+        title="Escapade aux pâturages",
+        ch_type=ChallengeType.drawing,
+        start_datetime=datetime.now(),
+        end_datetime=datetime(day=12, month=5, year=2022),
+        timelimit_seconds=600,
+        user_created=tuthur
+    )
+
+    demo_challenge_2 = challenge_repo.create(
+        subject="À l'envers",
+        title="Retournement de situation",
+        ch_type=ChallengeType.photo,
+        start_datetime=datetime.now(),
+        end_datetime=datetime(day=12, month=5, year=2022),
+        timelimit_seconds=None,
+        user_created=tuthur
+    )
+
+    demo_challenge_3 = challenge_repo.create(
+        subject="Cartharsis hivernale",
+        title="Exprimez vos sentiments refoulés",
+        ch_type=ChallengeType.text,
+        start_datetime=datetime.now(),
+        end_datetime=datetime(day=12, month=5, year=2022),
+        timelimit_seconds=1200,
+        user_created=tuthur
+    )
+
+    demo_challenge_4 = challenge_repo.create(
+        subject="Le fric roule",
+        title="Jamais laisser tomber",
+        ch_type=ChallengeType.sound,
+        start_datetime=datetime.now(),
+        end_datetime=datetime(day=12, month=5, year=2022),
+        timelimit_seconds=60,
+        user_created=tuthur
+    )
+
+    demo_dummy_answer_1 = ChallengeAnswer(
+        user=danny,
+        challenge=demo_challenge_1,
+        start_time=datetime.now(),
+        is_public=True
+    )
+    db.session.add(dummy_answer_1)
+    db.session.commit()
+
+    demo_user = user_repo.create(pseudo="johndoe", email="john.doe@gmail.com", password="toto")
+    challenge_repo.create_invite(tuthur.id, demo_user.id, demo_challenge_1.id)
+    challenge_repo.create_invite(tuthur.id, demo_user.id, demo_challenge_2.id)
+    challenge_repo.create_invite(tuthur.id, demo_user.id, demo_challenge_3.id)
+    challenge_repo.create_invite(tuthur.id, demo_user.id, demo_challenge_4.id)
+
+    danny.friends.append(user_a)
+    demo_user.friends.append(danny)
+    demo_user.friends.append(tuthur)
+    tuthur.friends.append(danny)
+
+    user_repo.update(danny)
+    user_repo.update(demo_user)
+    user_repo.update(tuthur)
