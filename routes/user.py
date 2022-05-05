@@ -89,7 +89,7 @@ def user_get_friends():
     if user is None:
         abort(401)
 
-    return jsonify([friend.json() for friend in user.friends]), 200
+    return jsonify([friend.json_preview() for friend in user.friends]), 200
 
 
 @user_blueprint.route("/friends", methods=("PUT",))
