@@ -182,4 +182,4 @@ class ChallengeRepository:
         return Challenge.query.filter(Challenge.title.ilike(query+'%')).limit(3).all()
 
     def get_all_user_answers(self, user_id):
-        return ChallengeAnswer.query.filter_by(user_id=user_id).all()
+        return ChallengeAnswer.query.filter_by(user_id=user_id).filter(ChallengeAnswer.end_time != None).all()
