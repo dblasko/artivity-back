@@ -160,3 +160,20 @@ def user_search():
     search = user_repo.search(query)
 
     return jsonify([u.json() for u in search]), 200
+
+
+@user_blueprint.route("/gallery", methods=("GET",))
+@auth.login_required()
+def get_user_gallery_route():
+    user_repo = UserRepository()
+    user = user_repo.get_by_pseudo(auth.current_user())
+    if user is None:
+        abort(404)
+
+    ch_repo = ChallengeRepository()
+    answers = ch_repo.get_all_user_answers(user.id)
+
+    return jsonify(
+        [ans.json(no_challenge=False) for ans in answers]
+    )
+

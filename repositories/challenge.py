@@ -180,3 +180,6 @@ class ChallengeRepository:
 
     def search(self, query):
         return Challenge.query.filter(Challenge.title.ilike(query+'%')).limit(3).all()
+
+    def get_all_user_answers(self, user_id):
+        return ChallengeAnswer.query.filter_by(user_id=user_id).all()
