@@ -62,3 +62,5 @@ class UserRepository:
     def search(self, query):
         return User.query.filter(User.pseudo.ilike(query+'%')).limit(3).all()
 
+    def get_all_users(self):
+        return User.query.all()

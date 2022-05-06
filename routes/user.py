@@ -85,6 +85,9 @@ def user_public_info_route(user_id):
 @auth.login_required()
 def user_get_friends():
     user_repo = UserRepository()
+    return jsonify([friend.json_preview() for friend in user_repo.get_all_users()]), 200
+
+
     user = user_repo.get_by_pseudo(auth.current_user())
     if user is None:
         abort(401)
